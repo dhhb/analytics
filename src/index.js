@@ -1,15 +1,18 @@
 import http from 'http';
 import express from 'express';
-import io from 'socket.io';
+import socketio from 'socket.io';
 import { host, port, env, mongodb } from 'c0nfig';
 
 const app = express();
 const server = http.createServer(app);
-const socket = io(server);
+const io = socketio(server);
 
-socket.on('connection', client => {
-  client.on('admin-user', data => {
+const admin = io.of('/admin');
+
+admin.on('connection', client => {
+  client.on('connect-admin-user', data => {
     console.log(data);
+    client.broadcast.emit('connected-admin-user', data);
   });
 });
 
